@@ -8,6 +8,7 @@ public class DataController {
 
     @PostMapping("/data")
     public String receiveData(@RequestBody String body) {
+        MessageStorage.add(body);
         System.out.println("Received: " + body);
         return "OK: " + body;
     }
