@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Messages</title>
 </head>
 <body>
 <h1>Saved Messages</h1>
 
 <ul>
-    <!-- Выводим все сообщения -->
+    <!-- Выводим все сообщения и время -->
     <th:block th:each="msg : ${messages}">
-        <li th:text="${msg.text}"></li>
+        <span th:text="${msg.createdAt}"></span>
+        <span th:text="${msg.text}"></span>
     </th:block>
 </ul>
 
