@@ -13,20 +13,20 @@ public class SportResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String text;
+    private String name;
     private Integer count;
     private LocalDateTime createdAt;
 
     public SportResult() {}
 
-    public SportResult(String text, Integer count) {
-        this.text = text;
+    public SportResult(String name, Integer count) {
+        this.name = name;
         this.count = count;
         this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
-    public String getText() { return text; }
-    public Integer getCount() { return count; }
+    public String getName() { return name; }
+    public Integer getQuantity() { return count; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
