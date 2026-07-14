@@ -9,7 +9,7 @@
 <ul>
     <!-- Выводим все сообщения -->
     <th:block th:each="msg : ${messages}">
-        <li th:text="${msg}"></li>
+        <li th:text="${msg.text}"></li>
     </th:block>
 </ul>
 

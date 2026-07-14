@@ -7,9 +7,17 @@ import java.util.stream.Collectors;
 
 @Controller
 public class MessagePageController {
+
+    private final MessageRepository repo;
+
+    public MessagePageController(MessageRepository repo) {
+        this.repo = repo;
+    }
+
     @GetMapping("/messages")
     public String messages(org.springframework.ui.Model model) {
-        model.addAttribute("messages", MessageStorage.getAll());
+        model.addAttribute("messages", repo.findAll());
+//        model.addAttribute("messages", MessageStorage.getAll());
         return "messages";
     }
 }
