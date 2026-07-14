@@ -16,8 +16,8 @@ public class SportPageController {
         this.repo = repo;
     }
 
-    @GetMapping("/sportData")
-    public String sportData(Model model) {
+    @GetMapping("/sportdata")
+    public String sportdata(Model model) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
@@ -29,8 +29,8 @@ public class SportPageController {
                 ))
                 .toList();
 
-        model.addAttribute("sportData", formattedSportData);
+        model.addAttribute("sportdata", formattedSportData);
 //        model.addAttribute("messages", MessageStorage.getAll());
-        return "sportData";
+        return "sportdata";
     }
 }
