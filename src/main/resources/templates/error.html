@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h2>Ошибка в приложении</h2>
+
+<p><strong>Сообщение:</strong></p>
+<p th:text="${errorMessage}"></p>
+
+<p><strong>StackTrace:</strong></p>
+<ul>
+    <li th:each="line : ${stackTrace}" th:text="${line}"></li>
+</ul>
+
+</body>
+</html>
