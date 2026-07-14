@@ -35,10 +35,8 @@
                 quantity: quantity
             })
         })
-        .then(r => r.json())
-        .then(data => {
-            alert("Сохранено!");
-        })
+        .then(r => r.text())
+        .then(msg => alert(msg))
         .catch(err => {
             alert("Ошибка: " + err);
         });
