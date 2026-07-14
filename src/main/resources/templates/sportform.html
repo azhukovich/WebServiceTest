@@ -20,6 +20,9 @@
 
 <button onclick="sendJson()">Сохранить</button>
 
+<!-- Здесь будет появляться сообщение -->
+<div id="result" style="margin-top:20px; font-weight:bold;"></div>
+
 <script>
     function sendJson() {
         const name = document.getElementById("name").value;
@@ -36,9 +39,10 @@
             })
         })
         .then(r => r.text())
-        .then(msg => alert(msg))
+        .then(msg => document.getElementById("result").innerText = msg)
         .catch(err => {
-            alert("Ошибка: " + err);
+            document.getElementById("result").innerText =
+                "Ошибка: " + err;
         });
     }
 </script>
