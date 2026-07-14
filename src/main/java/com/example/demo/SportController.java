@@ -20,11 +20,4 @@ public class SportController {
         sportRepo.save(sportResult);
         return "Saved: " + dto.getName() + " quantity: " + dto.getQuantity();
     }
-
-    @PostMapping("/sport")
-    public SportResult createFromForm(@RequestParam String name,
-                                @RequestParam Integer quantity) {
-
-        return sportRepo.save(new SportResult(name, quantity));
-    }
 }
