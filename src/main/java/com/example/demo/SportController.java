@@ -1,9 +1,6 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -22,5 +19,12 @@ public class SportController {
         SportResult sportResult = new SportResult(dto.getName(), dto.getQuantity());
         sportRepo.save(sportResult);
         return "Saved: " + dto.getName() + " quantity: " + dto.getQuantity();
+    }
+
+    @PostMapping("/sport")
+    public SportResult createFromForm(@RequestParam String name,
+                                @RequestParam Integer quantity) {
+
+        return sportRepo.save(new SportResult(name, quantity));
     }
 }
