@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+</head>
+<body>
+<h1>Saved Messages</h1>
+
+    <!-- Выводим все сообщения и время -->
+<table border="1" cellpadding="6">
+    <thead>
+    <tr>
+        <th>Дата</th>
+        <th>Текст</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="msg : ${sportData}">
+        <td th:text="${msg.createdAt}"></td>
+        <td th:text="${msg.name}"></td>
+        <td th:text="${msg.quantity}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

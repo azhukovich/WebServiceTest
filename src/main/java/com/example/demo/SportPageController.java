@@ -16,7 +16,7 @@ public class SportPageController {
         this.repo = repo;
     }
 
-    @GetMapping("/sport")
+    @GetMapping("/sportData")
     public String sportData(Model model) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
