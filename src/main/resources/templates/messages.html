@@ -7,13 +7,22 @@
 <body>
 <h1>Saved Messages</h1>
 
-<ul>
     <!-- Выводим все сообщения и время -->
-    <th:block th:each="msg : ${messages}">
-        <span th:text="${msg.createdAt}"></span>
-        <span th:text="${msg.text}"></span>
-    </th:block>
-</ul>
+<table border="1" cellpadding="6">
+    <thead>
+    <tr>
+        <th>Дата</th>
+        <th>Текст</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="msg : ${messages}">
+        <td th:text="${msg.createdAt}"></td>
+        <td th:text="${msg.text}"></td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
