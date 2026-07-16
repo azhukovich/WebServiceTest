@@ -25,7 +25,7 @@ public class SportController {
         return "Saved: " + dto.getName() + " quantity: " + dto.getQuantity();
     }
 
-    @GetMapping("/api/sport/stats")
+    @GetMapping("/sport/stats")
     public Map<String, Object> getStats(@RequestParam String name,
                                         @RequestParam String from,
                                         @RequestParam String to) {
