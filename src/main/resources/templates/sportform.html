@@ -28,7 +28,7 @@
 
 <br><br>
 
-<button class="btn btn-primary mt-3" onclick="sendJson(); loadTodayStats();">Сохранить</button>
+<button class="btn btn-primary mt-3" onclick="saveAndUpdate()">Сохранить</button>
 
 <!-- Bootstrap-карточка статистики -->
 <div class="card mt-4">
@@ -63,27 +63,27 @@
 </script>
 
 <script>
-    function sendJson() {
+    async function saveAndUpdate() {
+    await sendJson();      // дождаться сохранения
+    loadTodayStats();      // только потом обновить статистику
+    }
+</script>
+
+<script>
+    async function sendJson() {
         const name = document.getElementById("name").value;
         const quantity = parseInt(document.getElementById("quantity").value);
 
-        fetch("/api/sport", {
+        const response = await fetch("/api/sport", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: name,
-                quantity: quantity
-            })
-        })
-        .then(r => r.text())
-        .then(msg => document.getElementById("result").innerText = msg)
-        .catch(err => {
-            document.getElementById("result").innerText =
-                "Ошибка: " + err;
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, quantity })
         });
+
+        const msg = await response.text();
+        document.getElementById("result").innerText = msg;
     }
+
 </script>
 <script>
     window.onload = loadTodayStats;
