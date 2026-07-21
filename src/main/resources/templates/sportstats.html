@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Мобильная адаптация -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Посмотреть статистику</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+
+<a th:href="@{/sportform}" class="btn btn-primary">Вернуться и добавить результат</a>
+
+<form th:action="@{/sportstats}" method="get" class="row g-3 mb-4">
+
+    <!-- Выбор упражнения -->
+    <div class="col-auto">
+        <label class="form-label">Упражнение:</label>
+        <select name="exercise" class="form-select">
+            <option value="">Все</option>
+
+            <option th:each="exerciseName : ${exerciseNames}"
+                    th:value="${exerciseName}"
+                    th:text="${exerciseName}"
+                    th:selected="${exerciseName == selectedExercise}">
+            </option>
+        </select>
+    </div>
+
+
+    <!-- Выбор периода -->
+    <div class="col-auto">
+        <label class="form-label">Период:</label>
+        <select name="period" class="form-select">
+            <option value="week" th:selected="${selectedPeriod == 'week'}">Неделя</option>
+            <option value="month" th:selected="${selectedPeriod == 'month'}">Месяц</option>
+        </select>
+    </div>
+
+    <!-- Кнопка -->
+    <div class="col-auto align-self-end">
+        <button class="btn btn-success">Показать</button>
+    </div>
+
+</form>
+
+
+<!-- результаты -->
+<table class="table table-striped table-bordered mt-4">
+    <thead class="table-dark">
+    <tr>
+        <th>Дата</th>
+        <th>Результаты</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="entry : ${resultsByDay}">
+        <td th:text="${entry.key}"></td>
+        <td th:text="${entry.value}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
