@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,10 +44,10 @@ public class SportDetailsController {
                         )
                 ));
 
-
-        TreeMap<LocalDateTime, String> finalMap = grouped.entrySet().stream()
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        TreeMap<String, String> finalMap = grouped.entrySet().stream()
                 .collect(Collectors.toMap(
-                        d -> d.getKey(),
+                        d -> d.getKey().format(formatter),
                         d -> d.getValue().toString(),
                         (oldValue, newValue) -> oldValue, // Слияние при совпадении ключей
                         TreeMap::new
