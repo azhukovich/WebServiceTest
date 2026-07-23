@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -81,9 +82,8 @@ public class SportStatsController {
                         d -> d,
                         d -> resultStrs.getOrDefault(d, "Нет результатов"),
                         (oldValue, newValue) -> oldValue, // Слияние при совпадении ключей
-                        TreeMap::new
-                ))
-                ;
+                        () -> new TreeMap<LocalDate, String>(Comparator.reverseOrder())
+                ));
 
         model.addAttribute("resultsByDay", finalMap);
 
