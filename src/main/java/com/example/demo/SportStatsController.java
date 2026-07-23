@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -86,6 +83,35 @@ public class SportStatsController {
                 ));
 
         model.addAttribute("resultsByDay", finalMap);
+
+
+        //To color results in table
+        Map<LocalDate, String> colors = new HashMap<>();
+        for (Map.Entry<LocalDate, String> entry : finalMap.entrySet()) {
+            String result = entry.getValue();
+
+            String colorClass;
+
+            if (result.equals("Нет результатов")) {
+                colorClass = "gray";
+            } else {
+                // результат вида "1+10+15+13+15+20+13+13=100"
+                String[] parts = result.split("=");
+                int sum = Integer.parseInt(parts[1]);
+
+                if (sum > 100) {
+                    colorClass = "green";
+                } else if (sum >= 50) {
+                    colorClass = "yellow";
+                } else {
+                    colorClass = "blue";
+                }
+            }
+
+            colors.put(entry.getKey(), colorClass);
+        }
+
+        model.addAttribute("colors", colors);
 
         return "sportstats";
     }
