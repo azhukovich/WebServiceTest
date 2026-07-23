@@ -48,8 +48,10 @@ public class SportDetailsController {
         TreeMap<String, String> finalMap = grouped.entrySet().stream()
                 .collect(Collectors.toMap(
                         d -> d.getKey().format(formatter),
-                        d -> d.getValue().toString(),
-                        (oldValue, newValue) -> oldValue, // Слияние при совпадении ключей
+                        d -> d.getValue().stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(", ")),
+                        (oldValue, newValue) -> oldValue + ", " + newValue, // Слияние при совпадении ключей
                         TreeMap::new
                 ))
                 ;
