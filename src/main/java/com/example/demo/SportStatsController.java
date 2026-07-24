@@ -93,18 +93,21 @@ public class SportStatsController {
             String colorClass;
 
             if (result.equals("Нет результатов")) {
-                colorClass = "gray";
+                colorClass = "red";
             } else {
                 // результат вида "1+10+15+13+15+20+13+13=100"
                 String[] parts = result.split("=");
                 int sum = Integer.parseInt(parts[1]);
 
-                if (sum > 100) {
+                if (sum > 95) {
                     colorClass = "green";
                 } else if (sum >= 50) {
                     colorClass = "yellow";
-                } else {
+                } else if (sum >= 10) {
                     colorClass = "blue";
+                }
+                else {
+                    colorClass = "red";
                 }
             }
 
