@@ -31,6 +31,7 @@ public class SportDetailsController {
         LocalDate selectedDay = LocalDate.parse(day);
 
         Map<LocalDateTime, List<Integer>> grouped = sportRepo.findAll().stream()
+                .map(r->r.setCreatedAt(r.getCreatedAt().minusHours(3)))
                 .filter(r -> {
                     LocalDate d = r.getCreatedAt().toLocalDate();
                     return d.isEqual(selectedDay);
@@ -47,7 +48,7 @@ public class SportDetailsController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         TreeMap<String, String> finalMap = grouped.entrySet().stream()
                 .collect(Collectors.toMap(
-                        d -> d.getKey().format(formatter),
+                        d -> d.getKey().plusHours(3).format(formatter),
                         d -> d.getValue().stream()
                                 .map(String::valueOf)
                                 .collect(Collectors.joining(", ")),

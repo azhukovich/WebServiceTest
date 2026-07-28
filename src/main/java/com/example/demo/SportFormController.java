@@ -36,6 +36,7 @@ public class SportFormController {
                 .collect(Collectors.toList());
 
         Map<LocalDate, List<Integer>> grouped = sportRepo.findAll().stream()
+                .map(r->r.setCreatedAt(r.getCreatedAt().minusHours(3)))
                 .filter(r -> {
                     LocalDate d = r.getCreatedAt().toLocalDate();
                     return !d.isBefore(weekAgo) && !d.isAfter(today);
