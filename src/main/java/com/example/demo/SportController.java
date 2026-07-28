@@ -28,13 +28,15 @@ public class SportController {
     @GetMapping("/sport/stats")
     public Map<String, Object> getStats(@RequestParam String name,
                                         @RequestParam String from,
-                                        @RequestParam String to) {
+                                        @RequestParam String to,
+                                        @RequestParam Integer shiftHours) {
 
         LocalDateTime fromDate = LocalDate.parse(from).atStartOfDay();
         LocalDateTime toDate = LocalDate.parse(to).plusDays(1).atStartOfDay();
 
         int total = sportRepo.findAll().stream()
                 .filter(s -> s.getName().equals(name))
+                .map(s->s.setCreatedAt(s.getCreatedAt().plusHours(shiftHours)))
                 .filter(s -> !s.getCreatedAt().isBefore(fromDate))
                 .filter(s -> s.getCreatedAt().isBefore(toDate))
                 .mapToInt(SportResult::getQuantity)
