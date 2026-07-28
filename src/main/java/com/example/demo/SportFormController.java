@@ -44,7 +44,7 @@ public class SportFormController {
                 .collect(Collectors.groupingBy(
                         r -> r.getCreatedAt().toLocalDate(),
                         Collectors.mapping(
-                                r-> r.getQuantity(),
+                                SportResult::getQuantity,
                                 Collectors.toList()
                         )
                 ));
