@@ -4,29 +4,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@Accessors(chain = true)
+@NoArgsConstructor
 public class SportResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Integer count;
+    private Integer quantity;
     private LocalDateTime createdAt;
 
-    public SportResult() {}
-
-    public SportResult(String name, Integer count) {
+    public SportResult(String name, Integer quantity) {
         this.name = name;
-        this.count = count;
+        this.quantity = quantity;
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public Integer getQuantity() { return count; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime test() {
+        return getCreatedAt();
+    }
 }
