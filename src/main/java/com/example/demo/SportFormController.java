@@ -36,11 +36,13 @@ public class SportFormController {
                 .datesUntil(today.plusDays(1))
                 .collect(Collectors.toList());
 
-        //Получить последний результат
-        LocalDateTime lastRes = sportRepo.findAll().stream()
-                .map(SportResult::getCreatedAt)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        //Получить последний результат для каждого упражнения
+        Map<String, LocalDateTime> exerciseTimes = sportRepo.findAll().stream()
+                .collect(Collectors.toMap(
+                        SportResult::getName,
+                        SportResult::getCreatedAt,
+                        (time1,time2) -> time1.isAfter(time2) ? time1:time2
+                        ));
 
 
         Map<LocalDate, List<Integer>> grouped = sportRepo.findAll().stream()
@@ -84,7 +86,7 @@ public class SportFormController {
                 ;
 
         model.addAttribute("resultsByDay", finalMap);
-        model.addAttribute("latest", lastRes);
+        model.addAttribute("exerciseTimes", exerciseTimes);
 
         return "sportform";
     }
