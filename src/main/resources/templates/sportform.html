@@ -45,6 +45,54 @@
 <!-- Сообщение о сохранении -->
 <div id="result" class="mt-3 fw-bold"></div>
 
+<div id="lastTimer"
+     th:data-last="${latest != null ? latest : ''}">
+    После <span th:text="${latest != null ? latest : 'нет данных'}"></span> прошло: 00:00:00
+</div>
+
+
+<script>
+    let timerInterval = null;
+
+function startTimerFrom(dateString) {
+    if (!dateString) return; // если нет данных — не запускаем таймер
+
+    const lastTime = new Date(dateString);
+
+    if (timerInterval) clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+        const diff = Date.now() - lastTime.getTime();
+
+        const hours = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+
+        document.getElementById("lastTimer").innerText =
+            `После ${dateString} прошло: ${hours}:${minutes}:${seconds}`;
+    }, 1000);
+}
+
+
+        function loadTodayStats() {
+        const name = document.getElementById("name").value;
+        const todayStr = new Date().toISOString().slice(0, 10);
+
+        fetch(`/api/sport/stats?name=${encodeURIComponent(name)}&from=${todayStr}&to=${todayStr}&shiftHours=-3`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById("statsToday").innerText =
+                    `Сегодня: ${data.total}`;
+
+                // если сервер отдаёт lastRecord.createdAt — запускаем таймер
+                if (data.lastRecord && data.lastRecord.createdAt) {
+                    startTimerFrom(data.lastRecord.createdAt);
+                }
+            });
+    }
+</script>
+
+
 <!-- результаты за неделю -->
 <a th:href="@{/sportstats}" class="btn btn-primary">Статистика</a>
 
@@ -89,7 +137,12 @@
 
 </script>
 <script>
-    window.onload = loadTodayStats;
+    window.onload = () => {
+    loadTodayStats();
+
+    const last = document.getElementById("lastTimer").dataset.last;
+    if (last) startTimerFrom(last);
+};
 </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,6 +35,13 @@ public class SportFormController {
         List<LocalDate> days = weekAgo
                 .datesUntil(today.plusDays(1))
                 .collect(Collectors.toList());
+
+        //Получить последний результат
+        LocalDateTime lastRes = sportRepo.findAll().stream()
+                .map(SportResult::getCreatedAt)
+                .max(LocalDateTime::compareTo)
+                .orElse(null);
+
 
         Map<LocalDate, List<Integer>> grouped = sportRepo.findAll().stream()
                 .map(r->r.setCreatedAt(r.getCreatedAt().minusHours(3)))
@@ -76,6 +84,7 @@ public class SportFormController {
                 ;
 
         model.addAttribute("resultsByDay", finalMap);
+        model.addAttribute("latest", lastRes);
 
         return "sportform";
     }
