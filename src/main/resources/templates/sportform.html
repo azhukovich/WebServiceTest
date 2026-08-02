@@ -29,6 +29,8 @@
     <div class="mb-3">
         <label class="form-label">Количество:</label>
         <input type="number" id="quantity" class="form-control" required>
+        <textarea id="comment" class="form-control" placeholder="Комментарий (необязательно)"></textarea>
+    </div>
     </div>
 
     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
@@ -52,6 +54,23 @@
          th:data-last="${entry.value}">
         <span th:text="${entry.key}"></span> прошло:
         <span class="timer" th:id="'timer-' + ${entry.key}">00:00:00</span>
+    </div>
+</div>
+
+<!-- Красивый пример -->
+<div class="col-md-4 mb-3">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h5 class="card-title">
+                <i class="bi bi-stopwatch"></i> Отжимания
+            </h5>
+            <p class="card-text text-muted">Прошло времени:</p>
+            <h3 class="text-primary timer" data-last="2026-07-30T20:15:00Z">00:00:00</h3>
+            <div class="d-flex justify-content-between mt-3">
+                <span class="badge bg-success">Сегодня: 150</span>
+                <span class="badge bg-warning text-dark">10 мин назад</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -128,21 +147,33 @@ function startTimers() {
 </script>
 
 <script>
+    async function saveCommentAndUpdate(event) {
+    event.preventDefault(); // чтобы страница не перезагружалась
+
+    await sendComment();      // дождаться сохранения
+    await loadTodayStats();      // только потом обновить статистику
+    // перегрузить страницу через n миллисекунд
+    setTimeout(() => {    location.reload();    }, 1500);
+    }
+</script>
+
+<script>
     async function sendJson() {
         const name = document.getElementById("name").value;
+        const comment = document.getElementById("comment").value;
         const quantity = parseInt(document.getElementById("quantity").value);
 
         const response = await fetch("/api/sport", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, quantity })
+            body: JSON.stringify({ name, quantity, comment })
         });
 
         const msg = await response.text();
         document.getElementById("result").innerText = msg;
     }
-
 </script>
+
 <script>
     window.onload = () => {
     loadTodayStats();

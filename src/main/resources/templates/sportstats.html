@@ -97,6 +97,7 @@ div.gray {
         <th>Дата</th>
         <th>Результаты</th>
         <th>Оценка</th>
+        <th>Комментарий</th>
     </tr>
     </thead>
 
@@ -107,11 +108,12 @@ div.gray {
                 th:href="@{/sportdetails(exercise='Отжимания', day=${entry.key})}">
             </a>
         </td>
-        <td th:text="${entry.value}" class="result-cell">
+        <td th:text="${entry.value.quantities}" class="result-cell">
         </td>
         <td>
             <div th:classappend="${colors[entry.key]}" class="color-box"></div>
         </td>
+        <td th:text="${entry.value.comments}"></td>
     </tr>
     </tbody>
 </table>

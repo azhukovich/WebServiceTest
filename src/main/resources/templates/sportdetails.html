@@ -22,13 +22,15 @@
     <tr>
         <th>Дата</th>
         <th>Результаты</th>
+        <th>Комментарий</th>
     </tr>
     </thead>
 
     <tbody>
     <tr th:each="entry : ${resultsByDay}">
         <td th:text="${entry.key}" ></td>
-        <td th:text="${entry.value}"></td>
+        <td th:text="${entry.value.quantities}"></td>
+        <td th:text="${entry.value.comments}"></td>
     </tr>
     </tbody>
 </table>

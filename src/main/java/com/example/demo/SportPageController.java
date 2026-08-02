@@ -24,6 +24,7 @@ public class SportPageController {
         List<SportDto> formattedSportData = repo.findAll().stream()
                 .map(msg -> new SportDto(
                         msg.getName(),
+                        msg.getComment(),
                         msg.getQuantity(),
                         msg.getCreatedAt().format(formatter)
                 ))

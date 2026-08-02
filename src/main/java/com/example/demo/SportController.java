@@ -20,9 +20,9 @@ public class SportController {
     public String receiveSportData(@RequestBody SportDto dto) {
 //        MessageStorage.add(body);
 //        System.out.println("Received: " + body);
-        SportResult sportResult = new SportResult(dto.getName(), dto.getQuantity());
+        SportResult sportResult = new SportResult(dto.getName(), dto.getQuantity(), dto.getComment());
         sportRepo.save(sportResult);
-        return "Saved: " + dto.getName() + " quantity: " + dto.getQuantity();
+        return "Saved: " + dto.getName() + " quantity: " + dto.getQuantity() + "comment" + dto.getComment();
     }
 
     @GetMapping("/sport/stats")

@@ -24,11 +24,19 @@ public class SportResult {
     private String name;
     private Integer quantity;
     private LocalDateTime createdAt;
+    private String comment;
 
     public SportResult(String name, Integer quantity) {
         this.name = name;
         this.quantity = quantity;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public SportResult(String name, Integer quantity, String comment) {
+        this.name = name;
+        this.quantity = quantity;
+        this.createdAt = LocalDateTime.now();
+        this.comment = comment;
     }
 
     public LocalDateTime test() {

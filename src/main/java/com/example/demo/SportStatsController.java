@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ public class SportStatsController {
 
     private final SportRepository sportRepo;
 
+    private static final Logger log = LoggerFactory.getLogger(SportDetailsController.class);
     public SportStatsController(SportRepository sportRepo) {
         this.sportRepo = sportRepo;
     }
@@ -43,7 +46,8 @@ public class SportStatsController {
                 .datesUntil(today)
                 .collect(Collectors.toList());
 
-        Map<LocalDate, List<Integer>> grouped = sportRepo.findAll().stream()
+        record SportData(Integer quant, String comment) {};
+        Map<LocalDate, List<SportData>> grouped = sportRepo.findAll().stream()
                 .map(r->r.setCreatedAt(r.getCreatedAt().minusHours(3)))
                 .filter(r -> {
                     LocalDate d = r.getCreatedAt().toLocalDate();
@@ -53,43 +57,65 @@ public class SportStatsController {
                 .collect(Collectors.groupingBy(
                         r -> r.getCreatedAt().toLocalDate(),
                         Collectors.mapping(
-                                r-> r.getQuantity(),
+                                r -> new SportData(r.getQuantity(), r.getComment()),
                                 Collectors.toList()
                         )
                 ));
 
-        Map<LocalDate, String> resultStrs = grouped.entrySet().stream()
+        grouped.forEach((date, data) -> {
+            log.info("grouped" + date + " -> " + data.get(0).quant + " | " + data.get(0).comment());
+        });
+
+        record SportData2(String quantities, String comments) {}
+        Map<LocalDate, SportData2> resultStrs = grouped.entrySet().stream()
                         .collect(Collectors.toMap(
-                                Map.Entry::getKey,
+                                e -> e.getKey(),
         e->{
-            List<Integer> values = e.getValue();
+            List<SportData> values = e.getValue();
 
             String left = values.stream()
-                    .map(String::valueOf)
+                    .map(f->f.quant().toString())
                     .collect(Collectors.joining("+"));
 
             int sum = values.stream()
-                    .mapToInt(Integer::intValue)
+                    .mapToInt(d -> d.quant)
                     .sum();
 
-            return left + "=" + sum;
+            String comments = values.stream()
+                    .map(v -> v.comment() == null || v.comment().isBlank()
+                            ? "Нет комментариев"
+                            : v.comment())
+                    .collect(Collectors.joining("; "));
+
+            return new SportData2(left + "=" + sum, comments);
         }));
 
-        TreeMap<LocalDate, String> finalMap = days.stream()
+        resultStrs.forEach((date, data) -> {
+            log.info("resultStrs" + date + " -> " + data.quantities() + " | " + data.comments());
+        });
+
+        TreeMap<LocalDate, SportData2> finalMap = days.stream()
                 .collect(Collectors.toMap(
                         d -> d,
-                        d -> resultStrs.getOrDefault(d, "Нет результатов"),
+                        d -> resultStrs.getOrDefault(
+                                d,
+                                new SportData2("Нет результатов", "Нет комментариев")
+                        ),
                         (oldValue, newValue) -> oldValue, // Слияние при совпадении ключей
-                        () -> new TreeMap<LocalDate, String>(Comparator.reverseOrder())
+                        () -> new TreeMap<LocalDate, SportData2>(Comparator.reverseOrder())
                 ));
+
+        finalMap.forEach((date, data) -> {
+            log.info("finalMap" + date + " -> " + data.quantities() + " | " + data.comments());
+        });
 
         model.addAttribute("resultsByDay", finalMap);
 
 
         //To color results in table
         Map<LocalDate, String> colors = new HashMap<>();
-        for (Map.Entry<LocalDate, String> entry : finalMap.entrySet()) {
-            String result = entry.getValue();
+        for (Map.Entry<LocalDate, SportData2> entry : finalMap.entrySet()) {
+            String result = entry.getValue().quantities;
 
             String colorClass;
 
