@@ -20,7 +20,7 @@
     overflow-wrap: break-word;
 }
         .date-cell {
-    min-width: 100px;
+    min-width: 75px;
     max-width: 100px;      /* фиксированная ширина */
     white-space: nowrap;   /* не разрешать перенос строк */
     word-wrap: break-word; /* переносить длинные слова */
@@ -106,7 +106,7 @@ div.gray {
     <tbody>
     <tr th:each="entry : ${resultsByDay}">
         <td class="date-cell">
-            <a  th:text="${entry.key}"
+            <a  th:text="${#temporals.format(entry.key, 'dd-MM-yy')}"
                 th:href="@{/sportdetails(exercise='Отжимания', day=${entry.key})}">
             </a>
         </td>
