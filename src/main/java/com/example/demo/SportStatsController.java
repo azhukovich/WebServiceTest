@@ -82,9 +82,8 @@ public class SportStatsController {
                     .sum();
 
             String comments = values.stream()
-                    .map(v -> v.comment() == null || v.comment().isBlank()
-                            ? "Нет комментариев"
-                            : v.comment())
+                    .map(v -> v.comment())
+                    .filter(c -> c != null && !c.isBlank())
                     .collect(Collectors.joining("; "));
 
             return new SportData2(left + "=" + sum, comments);
@@ -99,7 +98,7 @@ public class SportStatsController {
                         d -> d,
                         d -> resultStrs.getOrDefault(
                                 d,
-                                new SportData2("Нет результатов", "Нет комментариев")
+                                new SportData2("Нет результатов", "")
                         ),
                         (oldValue, newValue) -> oldValue, // Слияние при совпадении ключей
                         () -> new TreeMap<LocalDate, SportData2>(Comparator.reverseOrder())
