@@ -12,7 +12,7 @@ public class ScheduledTasks {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 14*60*1)
+    @Scheduled(fixedRate = 14*60*1000)
     public void taskOne() {
 
         if (counter >= limit) {
