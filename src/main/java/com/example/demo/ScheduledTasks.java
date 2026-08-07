@@ -12,7 +12,7 @@ public class ScheduledTasks {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRate = 14*60*1000)
+    @Scheduled(fixedRate = 1*60*1000)
     public void taskOne() {
 
         if (counter >= limit) {
@@ -21,7 +21,7 @@ public class ScheduledTasks {
 
         counter++;
 
-        System.out.println("Task is executed each 14 minutes "+ limit + " times");
+        System.out.println("Task is executed each 1 minutes "+ limit + " times. This is run: "+counter);
         String response = restTemplate.getForObject(
                 "https://webservicetest-y5wj.onrender.com/sportform",
                 String.class
