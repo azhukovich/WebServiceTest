@@ -62,9 +62,9 @@ public class SportStatsController {
                         )
                 ));
 
-        grouped.forEach((date, data) -> {
-            log.info("grouped" + date + " -> " + data.get(0).quant + " | " + data.get(0).comment());
-        });
+//        grouped.forEach((date, data) -> {
+//            log.info("grouped" + date + " -> " + data.get(0).quant + " | " + data.get(0).comment());
+//        });
 
         record SportData2(String quantities, String comments) {}
         Map<LocalDate, SportData2> resultStrs = grouped.entrySet().stream()
@@ -89,9 +89,9 @@ public class SportStatsController {
             return new SportData2(left + "=" + sum, comments);
         }));
 
-        resultStrs.forEach((date, data) -> {
-            log.info("resultStrs" + date + " -> " + data.quantities() + " | " + data.comments());
-        });
+//        resultStrs.forEach((date, data) -> {
+//            log.info("resultStrs" + date + " -> " + data.quantities() + " | " + data.comments());
+//        });
 
         TreeMap<LocalDate, SportData2> finalMap = days.stream()
                 .collect(Collectors.toMap(
@@ -104,9 +104,9 @@ public class SportStatsController {
                         () -> new TreeMap<LocalDate, SportData2>(Comparator.reverseOrder())
                 ));
 
-        finalMap.forEach((date, data) -> {
-            log.info("finalMap" + date + " -> " + data.quantities() + " | " + data.comments());
-        });
+//        finalMap.forEach((date, data) -> {
+//            log.info("finalMap" + date + " -> " + data.quantities() + " | " + data.comments());
+//        });
 
         model.addAttribute("resultsByDay", finalMap);
 

@@ -33,7 +33,6 @@ public class SportDetailsController {
 
 
         LocalDate selectedDay = LocalDate.parse(day);
-        log.info("Зырим лог 1");
         record SportData(Integer quant, String comment) {};
         Map<LocalDateTime, List<SportData>> grouped = sportRepo.findAll().stream()
                 .peek(r->r.setCreatedAt(r.getCreatedAt().minusHours(3)))
@@ -50,7 +49,6 @@ public class SportDetailsController {
                         )
                 ));
 
-        log.info("Зырим лог 2");
         record SportData2(String quantities, String comments) {}
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         TreeMap<String, SportData2> finalMap = grouped.entrySet().stream()
@@ -64,10 +62,9 @@ public class SportDetailsController {
                         TreeMap::new
                 ))
                 ;
-        log.info("Зырим лог 3");
-        finalMap.forEach((date, data) -> {
-            log.info(date + " -> " + data.quantities() + " | " + data.comments());
-        });
+//        finalMap.forEach((date, data) -> {
+//            log.info(date + " -> " + data.quantities() + " | " + data.comments());
+//        });
 
         model.addAttribute("resultsByDay", finalMap);
 
