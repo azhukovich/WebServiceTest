@@ -8,8 +8,8 @@ import org.springframework.web.client.RestTemplate;
 public class ScheduledTasks {
 
     private int counter = 0;
-    private final int limit = 10;
-    private final int RATE = 6;
+    private final int limit = 6;
+    private final int RATE = 10;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
