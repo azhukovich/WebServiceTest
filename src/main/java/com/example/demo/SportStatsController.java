@@ -70,6 +70,7 @@ public class SportStatsController {
             finalMap.put(day, grouped.getOrDefault(day, new DayResults()));
         }
 
+        model.addAttribute("exerciseNames", exerciseNames);
         model.addAttribute("resultsByDay", finalMap);
 
         return "sportstats";

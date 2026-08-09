@@ -2,6 +2,7 @@ package com.example.demo;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,11 @@ public class DayResults {
                 .add(quantity, comment);
     }
 
-    public Collection<ExerciseResult> getExerciseResults() {
+    public Collection<ExerciseResult> getExerciseResults(List<String> allExercises) {
+        // добавляем пустые упражнения, если их нет
+        for (String ex : allExercises) {
+            map.computeIfAbsent(ex, ExerciseResult::new);
+        }
         return map.values();
     }
 
@@ -38,5 +43,14 @@ public class DayResults {
                 .mapToInt(ExerciseResult::getSum)
                 .sum();
     }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    public String getEmptyText() {
+        return "Нет результатов";
+    }
+
 }
 

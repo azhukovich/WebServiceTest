@@ -17,6 +17,7 @@ public class ExerciseResult {
 
     public ExerciseResult(String exerciseName) {
         this.exerciseName = exerciseName;
+        updateColor();
     }
 
     public void add(int quantity, String comment) {
@@ -25,6 +26,10 @@ public class ExerciseResult {
             comments.add(comment);
         }
         updateColor();
+    }
+
+    public boolean isEmpty() {
+        return quantities.isEmpty();
     }
 
     // Формат: 2+5+8=15
@@ -40,7 +45,7 @@ public class ExerciseResult {
         return left + "=" + sum;
     }
 
-    // Комментарии: "тяжело; норм"
+    // Комментарии:
     public String formatComments() {
         return String.join("; ", comments);
     }
@@ -50,6 +55,10 @@ public class ExerciseResult {
     }
 
     private void updateColor() {
+        if (isEmpty()) {
+            colorClass = "red";
+            return;
+        }
         int sum = quantities.stream().mapToInt(Integer::intValue).sum();
         if (sum > 95) colorClass = "green";
         else if (sum >= 50) colorClass = "yellow";

@@ -96,11 +96,13 @@
 
         <!-- Результаты по каждому упражнению -->
         <td class="result-cell">
-            <div th:each="res : ${entry.value.exerciseResults}">
+            <div th:each="res : ${entry.value.getExerciseResults(exerciseNames)}">
                 <span th:text="${res.exerciseName} + ': ' + ${res.formatQuantities()}"></span>
                 <div class="color-box" th:classappend="${res.colorClass}"></div>
             </div>
         </td>
+
+
 
         <!-- Общий комментарий -->
         <td th:text="${entry.value.formatComments()}"></td>
