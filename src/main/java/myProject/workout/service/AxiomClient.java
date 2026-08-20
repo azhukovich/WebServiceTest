@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package myProject.workout.service;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

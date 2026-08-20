@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 import lombok.Getter;
 
@@ -60,7 +60,7 @@ public class ExerciseResult {
             return;
         }
         int sum = quantities.stream().mapToInt(Integer::intValue).sum();
-        if (sum > 95) colorClass = "green";
+        if (sum > 90) colorClass = "green";
         else if (sum >= 50) colorClass = "yellow";
         else if (sum >= 10) colorClass = "blue";
         else if (sum > 0) colorClass = "red";

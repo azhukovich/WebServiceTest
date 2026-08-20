@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 public class MessageDto {
     private final String text;

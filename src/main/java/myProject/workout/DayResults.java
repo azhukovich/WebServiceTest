@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

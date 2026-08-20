@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

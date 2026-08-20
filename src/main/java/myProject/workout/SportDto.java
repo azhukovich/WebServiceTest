@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 public class SportDto {
     private final String name;

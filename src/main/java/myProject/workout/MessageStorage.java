@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.demo;
+package myProject.workout;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,6 @@
-package com.example.demo.filters;
+package myProject.workout.filters;
 
-import com.example.demo.service.AxiomClient;
+import myProject.workout.service.AxiomClient;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
