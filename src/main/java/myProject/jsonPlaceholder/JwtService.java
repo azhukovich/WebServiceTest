@@ -12,16 +12,22 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String secret = "uA1r9f2q4s7v9xC3F6J9L2Q5N8R1T4W7Z0B3E6H9K2M5P8S1U4X7A0D3G6J9L2Q5";
+
+
+    private final String secret = "IVyhSXrQpk5tjdAt/Zy2ouq+OQYHZVxve+kW32r47Nk=";
     private SecretKey key;
 
     @PostConstruct
     public void init() {
         // Декодируем Base64-строку в секретный ключ
+//        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+//        String secret = Base64.getEncoder().encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
+        System.out.println("secret is:" + secret);
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     public String generateToken(String username) {
+        System.out.println("Generate key: " + key);
         return Jwts.builder()
                 .subject(username) // Вместо setSubject()
                 .issuedAt(new Date()) // Вместо setIssuedAt()
@@ -31,6 +37,7 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
+        System.out.println("Verify key: " + key);
         return Jwts.parser() // Вместо parserBuilder()
                 .verifyWith(key) // Вместо setSigningKey()
                 .build()
