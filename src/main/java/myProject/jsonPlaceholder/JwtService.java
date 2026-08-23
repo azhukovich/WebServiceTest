@@ -1,8 +1,9 @@
 package myProject.jsonPlaceholder;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import io.jsonwebtoken.io.Decoders;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -11,7 +12,13 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private String secret = "VGhpcyBpcyBhIHNlY3VyZSBrZXkgZm9yIEhTMjU2IQ==";
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()
