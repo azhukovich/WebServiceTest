@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/workout")
 public class SportController {
 
     private final SportRepository sportRepo;

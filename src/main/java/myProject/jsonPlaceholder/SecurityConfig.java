@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/sportform").permitAll()
                         .requestMatchers("/sportdetails").permitAll()
                         .requestMatchers("/sportdata").permitAll()
+                        .requestMatchers("/workout/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

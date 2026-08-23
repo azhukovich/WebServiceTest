@@ -113,7 +113,7 @@ function startTimers() {
      const name = document.getElementById("name").value;
      const todayUTC = new Date().toISOString().slice(0, 10);
 
-     const response = await fetch(`/api/sport/stats?name=${encodeURIComponent(name)}&from=${todayUTC}&to=${todayUTC}&shiftHours=-3`);
+     const response = await fetch(`/workout/sport/stats?name=${encodeURIComponent(name)}&from=${todayUTC}&to=${todayUTC}&shiftHours=-3`);
      const data = await response.json();
 
      // обновляем статистику
@@ -171,7 +171,7 @@ function startTimers() {
         const comment = document.getElementById("comment").value;
         const quantity = parseInt(document.getElementById("quantity").value);
 
-        const response = await fetch("/api/sport", {
+        const response = await fetch("/workout/sport", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, quantity, comment })
