@@ -2,6 +2,7 @@ package myProject.jsonPlaceholder;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,14 +24,16 @@ public class AuthController {
     }
 
     @Data
-    public class LoginRequest {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginRequest {
         private String username;
         private String password;
     }
 
     @Data
     @AllArgsConstructor
-    public class TokenResponse {
+    public static class TokenResponse {
         private String token;
     }
 }
