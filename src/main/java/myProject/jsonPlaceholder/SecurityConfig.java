@@ -25,6 +25,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/sportstats").permitAll()
+                        .requestMatchers("/sportform").permitAll()
+                        .requestMatchers("/sportdetails").permitAll()
+                        .requestMatchers("/sportdata").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
