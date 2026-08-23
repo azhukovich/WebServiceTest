@@ -12,7 +12,8 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private String secret = "VGhpcyBpcyBhIHNlY3VyZSBrZXkgZm9yIEhTMjU2IQ==";
+    private String secret = "uA1r9f2q4s7v9xC3F6J9L2Q5N8R1T4W7Z0B3E6H9K2M5P8S1U4X7A0D3G6J9L2Q5";
+
     private Key key;
 
     @PostConstruct
