@@ -6,6 +6,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class ScheduledTasks {
@@ -36,7 +39,10 @@ public class ScheduledTasks {
         counter++;
 
 //        System.out.println("Task is executed each "+RATE+" minutes "+ limit + " times. This is run: "+counter);
-        System.out.println("Task is executed each "+RATE+" minutes within 1 hour from start or last visit. This is run: "+counter);
+        System.out.println("Task is executed each "+RATE+" minutes within 1 hour from last activity. " +
+                "Last activity: " + LocalDateTime.ofInstant(visitTracker.getLastVisit(), ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("HH:mm"))
+                +" This is run: "+counter);
         String response = restTemplate.getForObject(
                 "https://webservicetest-y5wj.onrender.com/sportform",
                 String.class
