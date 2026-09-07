@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
 public class SportFormController {
 
     private final SportRepository sportRepo;
+    private final VisitTracker visitTracker;
 
-    public SportFormController(SportRepository sportRepo) {
+    public SportFormController(SportRepository sportRepo, VisitTracker visitTracker) {
         this.sportRepo = sportRepo;
+        this.visitTracker = visitTracker;
     }
 
     @GetMapping("/sportform")
     public String sportForm(Model model) {
+
+        visitTracker.updateVisit();
 
         // список названий
         List<String> names = List.of("Отжимания", "Приседания");
