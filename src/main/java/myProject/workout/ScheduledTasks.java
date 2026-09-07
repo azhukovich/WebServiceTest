@@ -44,7 +44,7 @@ public class ScheduledTasks {
                 .format(DateTimeFormatter.ofPattern("HH:mm"))
                 +" This is run: "+counter);
         String response = restTemplate.getForObject(
-                "https://webservicetest-y5wj.onrender.com/sportform",
+                "https://webservicetest-y5wj.onrender.com/sportdata",
                 String.class
         );
 //        System.out.println(response);
