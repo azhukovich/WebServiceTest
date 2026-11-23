@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Генератор политической карты для печати</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background: #f3f4f6; color: #1f2937; overflow: hidden; }
+
+        /* Левая панель управления */
+        .sidebar {
+          width: 340px;
+          background: #ffffff;
+          border-right: 1px solid #e5e7eb;
+          display: flex;
+          flex-direction: column;
+          padding: 20px;
+          gap: 14px;
+          z-index: 10;
+        }
+        .sidebar h2 { font-size: 18px; font-weight: 700; }
+        .control-group { display: flex; flex-direction: column; gap: 6px; }
+        .control-group label { font-size: 13px; font-weight: 600; color: #4b5563; }
+        input[type="text"] {
+          padding: 9px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+        }
+        input[type="text"]:focus { border-color: #2563eb; }
+        .color-row { display: flex; align-items: center; gap: 10px; }
+        input[type="color"] { width: 44px; height: 36px; border: none; background: none; cursor: pointer; }
+
+        .actions-row { display: flex; justify-content: space-between; font-size: 12px; }
+        .link-btn { background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; }
+
+        /* Список стран */
+        .country-list {
+          flex: 1;
+          overflow-y: auto;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 6px;
+        }
+        .country-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+        }
+        .country-item:hover { background: #f3f4f6; }
+        .country-item input { cursor: pointer; width: 16px; height: 16px; }
+
+        /* Кнопки экспорта */
+        .export-buttons { display: flex; flex-direction: column; gap: 8px; }
+        .btn {
+          padding: 11px;
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.15s;
+        }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #e5e7eb; color: #1f2937; }
+        .btn-secondary:hover { background: #d1d5db; }
+
+        /* Область предпросмотра карты */
+        .preview-area {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          overflow: auto;
+        }
+        .canvas-wrapper {
+          background: #ffffff;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          border-radius: 12px;
+          padding: 16px;
+          max-width: 100%;
+          max-height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        svg#world-map { width: 100%; height: auto; max-height: 85vh; display: block; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <h2>Конструктор карты</h2>
+
+    <div class="control-group">
+        <label for="map-title">Заголовок на карте</label>
+        <input type="text" id="map-title" value="Мои путешествия по миру" placeholder="Введите заголовок..." />
+    </div>
+
+    <div class="control-group">
+        <label>Цвет посещённых стран</label>
+        <div class="color-row">
+            <input type="color" id="fill-color" value="#2563eb" />
+            <span id="color-hex" style="font-size: 13px; color: #6b7280;">#2563eb</span>
+        </div>
+    </div>
+
+    <div class="control-group" style="flex: 1; min-height: 0;">
+        <label for="search-input">Выбор стран (<span id="selected-count">0</span>)</label>
+        <input type="text" id="search-input" placeholder="Поиск страны (например, Belarus)..." />
+        <div class="actions-row">
+            <button class="link-btn" id="clear-btn">Сбросить выбор</button>
+            <span id="loading-status" style="color: #6b7280;">Загрузка карты...</span>
+        </div>
+        <div class="country-list" id="country-list"></div>
+    </div>
+
+    <div class="export-buttons">
+        <button class="btn btn-primary" id="export-png">Скачать PNG для печати (6000 px)</button>
+        <button class="btn btn-secondary" id="export-svg">Скачать векторный SVG</button>
+    </div>
+</aside>
+
+<main class="preview-area">
+    <div class="canvas-wrapper">
+        <svg id="world-map" xmlns="http://w3.org" viewBox="0 0 1200 680" width="1200" height="680">
+            <rect width="1200" height="680" fill="#ffffff" />
+            <text id="svg-title" x="600" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#111827">Мои путешествия по миру</text>
+            <g id="countries-layer" transform="translate(0, 35)"></g>
+            <g id="labels-layer" transform="translate(0, 35)"></g>
+            <text id="svg-footer" x="600" y="655" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#6b7280">Посещено стран: 0</text>
+        </svg>
+    </div>
+</main>
+
+<script>
+    const MAP_URL = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
+    const DEFAULT_FILL = "#e5e7eb";
+    const STROKE_COLOR = "#ffffff";
+
+    let selectedCountries = new Set(JSON.parse(localStorage.getItem("visitedCountries") || "[]"));
+    let activeColor = localStorage.getItem("mapColor") || "#2563eb";
+    let allCountries = [];
+    let mapFeatures = [];
+    let pathGenerator = null;
+
+    const svg = d3.select("#world-map");
+    const countriesLayer = d3.select("#countries-layer");
+    const labelsLayer = d3.select("#labels-layer");
+    const countryListEl = document.getElementById("country-list");
+    const searchInput = document.getElementById("search-input");
+    const colorInput = document.getElementById("fill-color");
+    const colorHex = document.getElementById("color-hex");
+    const titleInput = document.getElementById("map-title");
+    const svgTitle = document.getElementById("svg-title");
+    const svgFooter = document.getElementById("svg-footer");
+    const selectedCountEl = document.getElementById("selected-count");
+    const statusEl = document.getElementById("loading-status");
+
+    colorInput.value = activeColor;
+    colorHex.textContent = activeColor;
+
+    // Загрузка геоданных и отрисовка карты
+    d3.json(MAP_URL).then(worldData => {
+      statusEl.textContent = "Готово";
+      mapFeatures = topojson.feature(worldData, worldData.objects.countries).features
+        .filter(d => d.id !== "010" && d.properties && d.properties.name);
+
+      allCountries = mapFeatures.map(f => ({
+        id: String(f.id),
+        name: f.properties.name
+      })).sort((a, b) => a.name.localeCompare(b.name));
+
+      const projection = d3.geoNaturalEarth1()
+        .scale(225)
+        .translate([580, 315]);
+
+      pathGenerator = d3.geoPath().projection(projection);
+
+      countriesLayer.selectAll("path")
+        .data(mapFeatures)
+        .enter()
+        .append("path")
+        .attr("d", pathGenerator)
+        .attr("data-id", d => String(d.id))
+        .attr("fill", d => selectedCountries.has(String(d.id)) ? activeColor : DEFAULT_FILL)
+        .attr("stroke", STROKE_COLOR)
+        .attr("stroke-width", "0.7")
+        .style("cursor", "pointer")
+        .on("click", function(event, d) {
+          toggleCountry(String(d.id));
+        });
+
+      renderLabels();
+      renderList();
+      updateStats();
+    }).catch(() => {
+      statusEl.textContent = "Ошибка сети";
+    });
+
+    // Отрисовка названий посещённых стран
+    function renderLabels() {
+      if (!pathGenerator) return;
+
+      const visitedFeatures = mapFeatures.filter(d => selectedCountries.has(String(d.id)));
+      labelsLayer.selectAll("text").remove();
+
+      labelsLayer.selectAll("text")
+        .data(visitedFeatures)
+        .enter()
+        .append("text")
+        .attr("x", d => {
+          const c = pathGenerator.centroid(d);
+          return isNaN(c[0]) ? -999 : c[0];
+        })
+        .attr("y", d => {
+          const c = pathGenerator.centroid(d);
+          return isNaN(c[1]) ? -999 : c[1];
+        })
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .attr("font-family", "Arial, Helvetica, sans-serif")
+        .attr("font-weight", "600")
+        .attr("font-size", d => {
+          const area = pathGenerator.area(d);
+          if (area > 3000) return "13px";
+          if (area > 1000) return "10px";
+          if (area > 300) return "8px";
+          return "6px";
+        })
+        .attr("fill", "#111827")
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", "2.2px")
+        .attr("stroke-linejoin", "round")
+        .style("paint-order", "stroke")
+        .style("pointer-events", "none")
+        .text(d => d.properties.name);
+    }
+
+    function toggleCountry(id) {
+      if (selectedCountries.has(id)) {
+        selectedCountries.delete(id);
+      } else {
+        selectedCountries.add(id);
+      }
+      saveAndRefresh();
+    }
+
+    function saveAndRefresh() {
+      localStorage.setItem("visitedCountries", JSON.stringify([...selectedCountries]));
+      countriesLayer.selectAll("path")
+        .attr("fill", d => selectedCountries.has(String(d.id)) ? activeColor : DEFAULT_FILL);
+      renderLabels();
+      renderList(searchInput.value);
+      updateStats();
+    }
+
+    function updateStats() {
+      const count = selectedCountries.size;
+      selectedCountEl.textContent = count;
+      svgFooter.textContent = `Посещено стран: ${count}`;
+    }
+
+    function renderList(filter = "") {
+      const query = filter.trim().toLowerCase();
+      countryListEl.innerHTML = "";
+
+      allCountries
+        .filter(c => c.name.toLowerCase().includes(query))
+        .forEach(country => {
+          const label = document.createElement("label");
+          label.className = "country-item";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = selectedCountries.has(country.id);
+          checkbox.addEventListener("change", () => toggleCountry(country.id));
+
+          const span = document.createElement("span");
+          span.textContent = country.name;
+
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          countryListEl.appendChild(label);
+        });
+    }
+
+    // События интерфейса
+    searchInput.addEventListener("input", e => renderList(e.target.value));
+
+    colorInput.addEventListener("input", e => {
+      activeColor = e.target.value;
+      colorHex.textContent = activeColor;
+      localStorage.setItem("mapColor", activeColor);
+      saveAndRefresh();
+    });
+
+    titleInput.addEventListener("input", e => {
+      svgTitle.textContent = e.target.value;
+    });
+
+    document.getElementById("clear-btn").addEventListener("click", () => {
+      selectedCountries.clear();
+      saveAndRefresh();
+    });
+
+    // Экспорт в SVG (бесконечное качество для типографии)
+    document.getElementById("export-svg").addEventListener("click", () => {
+      const svgNode = document.getElementById("world-map");
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgNode);
+      const blob = new Blob(Array.of(svgString), { type: "image/svg+xml;charset=utf-8" });
+      triggerDownload(URL.createObjectURL(blob), "world-map.svg");
+    });
+
+    document.getElementById("export-png").addEventListener("click", () => {
+      const svgNode = document.getElementById("world-map");
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgNode);
+      const svgBlob = new Blob(Array.of(svgString), { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.onload = () => {
+        const exportWidth = 6000;
+        const exportHeight = 3400;
+        const canvas = document.createElement("canvas");
+        canvas.width = exportWidth;
+        canvas.height = exportHeight;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, exportWidth, exportHeight);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob(blob => {
+          triggerDownload(URL.createObjectURL(blob), "world-map-print-6000px.png");
+        }, "image/png");
+      };
+      img.src = url;
+    });
+
+    function triggerDownload(url, filename) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+</script>
+
+</body>
+</html>
